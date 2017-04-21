@@ -37,9 +37,9 @@ public class Main {
     static Statement ps5;
     static ResultSet rs5;
 
-    private static final String URL = "jdbc:oracle:thin:@10.7.124.101:1521:INFO";
-    private static final String USER = "metasonic";
-    private static final String PWD = "metasonic";
+    private static final String URL = url;
+    private static final String USER = user;
+    private static final String PWD = pwd;
 
     public static void main(String[] args) {
 
@@ -112,12 +112,7 @@ public class Main {
 
         public static void workWithOPSUsers(ArrayList<String> array, String ufps_index) throws SQLException {
 
-            //ArrayList<String> allOPSsFromAllPostamts = new ArrayList<>();
-//            String query12 = "SELECT DISTINCT TABLE4.name, TABLE4.postamt, TABLE3.ufps_index FROM (SELECT TABLE1.name, TABLE1.postamt\n" +
-//                    "  FROM (SELECT UM_USER.NAME AS name, UM_GROUP.NAME AS postamt FROM UM_USER, UM_GROUP, UM_GROUP_UM_USER WHERE UM_GROUP_UM_USER.UM_USER = UM_USER.ID and\n" +
-//                    "UM_GROUP_UM_USER.UM_GROUP =UM_GROUP.ID AND REGEXP_LIKE(UM_GROUP.NAME, '\\d{5}$')) TABLE1 INNER JOIN (SELECT UM_USER.NAME AS name FROM UM_USER, UM_GROUP_UM_USER WHERE UM_GROUP_UM_USER.UM_USER =UM_USER.ID and UM_GROUP_UM_USER.UM_GROUP = 15) TABLE2 ON\n" +
-//                    "    TABLE1.name = TABLE2.name) table4 inner JOIN (SELECT UFPS_INDEX  AS ufps_index, POSTAMT_INDEX AS postamt_index FROM POSTAMT_VIEW) TABLE3 ON table4.postamt LIKE UPPER(CONCAT('%', ?)) AND UFPS_INDEX = '" + ufps_index + "'";
-            LOOP: while (true) {
+                LOOP: while (true) {
                 System.out.print("Введите значение, что вы хотите сделать с пользователями: \n" +
                         "1 - добавить пользователей рандомно, в зависимости только от УФПС \n" + //setMultOPSsforOnePostamt(String ufps_index, String postamt_index)
                         "2 - добавить пользователей рандомно, в зависимости от УФПС и Почтамта (пользователь принадлежит определенному Почтамту) \n" + //setOneOPSforOnePostamt(String ufps_index)
@@ -144,40 +139,7 @@ public class Main {
                         System.out.println("Неправильное значение.");
                         continue LOOP;
                 }
-            }
-            /*try {
-                con = DriverManager.getConnection(URL, USER, PWD);
-                System.out.println("connection is set");
-                for (int i=0; i< array.size(); i++){
-                    //System.out.println(array.get(i));
-                    ps2 = con.prepareStatement(query12);
-                    ps2.setString(1, array.get(i));
-                    rs2 = ps2.executeQuery();
-                    ArrayList<String> names = new ArrayList<>();
-                    while (rs2.next()) {
-                        String name = rs2.getString("NAME");
-                        System.out.println(name);
-                        names.add(name);
-                    }
-                    //System.out.println("countOPSUsers: " + names);
-                    //System.out.println(names.size());
-                    if (names.size() == 1){
-                        System.out.println("Один ОПС");
-                        setOneOPSforOnePostamt(names, ufps_index, array.get(i));
-                    } else if (names.size() > 1){
-                        System.out.println("Несколько ОПС");
-                        setMultOPSsforOnePostamt(names, ufps_index, array.get(i));
-                    } else {
-                        //System.out.println("Нет пользователя с ролью ОПС в данном почтамте.");
-                        //setOneOPSforOnePostamt(ufps_index);
-                        setMultOPSsforOnePostamt(ufps_index, array.get(i));
-                    }
-                    for (String name: names){
-                        allOPSsFromAllPostamts.add(name);
-                    }
-                }
-                System.out.println("setMultOPSsforOnePostamt: " + allOPSsFromAllPostamts);*/
-
+          }
     }
 
     public static void setOneOPSforOnePostamt(ArrayList<String> names, String ufps_index, String postamt_index) throws SQLException {
@@ -198,71 +160,6 @@ public class Main {
                     con.close();
             } catch (Throwable th) {
         }*/
-    }
-
-    /*
-    Set full file path.
-     */
-    private static final String FILE_NAME = "C:\\Users\\AGoryuchkina\\Desktop\\testXLSX.xls";
-
-
-    /*
-    Read info from XLS (2003) file. To read from XLSX (2007) you need to change HSSF prefix to XSSF.
-
-     */
-    private static List<String> readXLSX(){
-        List<String> names = new ArrayList<>();
-        List<String> f = new ArrayList<>();
-        List<String> n = new ArrayList<>();
-        List<String> ot = new ArrayList<>();
-        int numCells=0;
-        int numRows=0;
-
-        try{
-            FileInputStream excelFile = new FileInputStream(new File(FILE_NAME));
-        Workbook workbook = new HSSFWorkbook(excelFile);
-        Sheet datatypeSheet = workbook.getSheetAt(0);
-        Iterator<Row> rowIterator = datatypeSheet.iterator();
-
-        while (rowIterator.hasNext()) {
-            numRows ++;
-            Row currentRow = rowIterator.next();
-            Iterator<Cell> cellIterator = currentRow.iterator();
-            //ArrayList<Cell> cells = new ArrayList<>();
-
-            while (cellIterator.hasNext()) {
-                Cell currentCell = cellIterator.next();
-                if (currentCell == null){
-                    break;
-                }
-                numCells++;
-
-                //getCellTypeEnum shown as deprecated for version 3.15
-                //getCellTypeEnum ill be renamed to getCellType starting from version 4.0
-                if (currentCell.getCellType() == Cell.CELL_TYPE_STRING) {
-                    //System.out.print(currentCell.getStringCellValue() + "--");
-                } else if (currentCell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-                    //System.out.print(currentCell.getNumericCellValue() + "--");
-                }
-                /*
-                Set particular cells to particular lists in order tp work with them further
-                 */
-                if (numCells == 1) f.add(currentCell.getStringCellValue());
-                if (numCells == 2) n.add(currentCell.getStringCellValue());
-                if (numCells == 3) ot.add(currentCell.getStringCellValue());
-            //names.add(f.get(numRows) + " " + n.get(numRows) + " " + o.get(numRows));
-            }
-            names.add(f.get(numRows-1) + " " + n.get(numRows-1) + " " + ot.get(numRows-1));
-            numCells = 0;
-            System.out.println(f.get(numRows-1) + "\n" + n.get(numRows-1) + "\n" + ot.get(numRows-1) + "\n");
-        }
-            System.out.println("names: " + names);
-    } catch (FileNotFoundException e) {
-        e.printStackTrace();
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-    return names;
     }
 
     public static void setOneOPSforOnePostamt(String ufps_index) throws SQLException {
@@ -325,8 +222,8 @@ public class Main {
 
     public static void setMultOPSsforOnePostamt(String ufps_index, String postamt_index) throws SQLException {
         //System.out.println("setMultOPSsforOnePostamt start  1");
-        String[] names = {"Кочерга Татьяна Вячеславовна",
-                "Дудкина Виктория Викторовна"
+        String[] names = {"name1",
+                "name2"
         };
         ArrayList<String> card_ids = getCard_id(ufps_index, postamt_index);
         int numRows = card_ids.size();
@@ -365,10 +262,8 @@ public class Main {
         rs3 = st3.executeQuery(query3);
         while (rs3.next()){
             mail = rs3.getString("ATTRIBUTEVALUE");
-            if (mail.equals(null)) mail = "PochtaInfoPunkt@gmail.com";
-            //System.out.println(mail);
+            if (mail.equals(null)) mail = some_stub;
         }
-        //if (mail.equals(null)) mail = "PochtaInfoPunkt@gmail.com";
         return mail;
     }
 }
